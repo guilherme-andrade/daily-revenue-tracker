@@ -1,0 +1,28 @@
+<div class="row align-items-center h-100">
+  <div class="col-6 offset-3 text-center rounded bg-white">
+      <div class="col-xs-12">
+        <h1>Report Submitted!</h1>
+      </div>
+      <div class="col-xs-12">
+        <p>
+          Thank you <%= current_user.full_name %>. Please check that you have the missing cash amount.
+        </p>
+      </div>
+      <div class="col-xs-12">
+        <h1>
+          Cash Missing ->
+          <span class="text-primary">
+            <%= @daily_report.bar %>
+          </span>
+        </h1>
+        <h2>
+          Summe KreditKarte ->
+          <span class="text-muted">
+            <%= @daily_report.kreditkarte_total %>
+          </span>
+        </h2>
+      </div>
+    <%= link_to 'Confirm', confirm_daily_report_path(@daily_report), class: 'btn btn-primary', method: :patch %>
+    <%= link_to 'Redo Report', daily_report_path(@daily_report), method: :delete, class: 'btn btn-danger'  %>
+  </div>
+</div>

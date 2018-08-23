@@ -1,0 +1,87 @@
+
+<%= simple_form_for(@daily_report) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <div class="row py-2 my-3 border bg-white">
+      <div class="col-6">
+        <%= f.input :date %>
+      </div>
+    </div>
+    <div class="row py-2 my-3 border bg-white">
+      <div class="col-12 py-2">
+        <h4>Lunch</h4>
+      </div>
+      <div class="col-6">
+        <%= f.input :lunch_umsatz %>
+      </div>
+      <div class="col-6">
+        <%= f.input :lunch_anzahl_personen %>
+      </div>
+    </div>
+    <div class="row py-2 my-3 border bg-white">
+      <div class="col-12 py-2">
+        <h4>Dinner</h4>
+      </div>
+      <div class="col-6">
+        <%= f.input :dinner_umsatz %>
+      </div>
+      <div class="col-6">
+        <%= f.input :dinner_anzahl_personen %>
+      </div>
+    </div>
+    <div class="row py-2 my-3 border bg-white">
+      <div class="col-12 py-2">
+        <h4>KreditKarte</h4>
+      </div>
+      <div class="col-3">
+        <%= f.input :mastercard %>
+      </div>
+      <div class="col-3">
+        <%= f.input :visa %>
+      </div>
+      <div class="col-3">
+        <%= f.input :maestro %>
+      </div>
+      <div class="col-3">
+        <%= f.input :andere %>
+      </div>
+    </div>
+    <div class="row py-2 my-3 border bg-white align-items-end">
+      <div class="col-12 py-2">
+        <h4>Andere</h4>
+      </div>
+      <div class="col-3">
+        <%= f.input :summe_lunchchecks %>
+      </div>
+      <div class="col-3">
+        <%= f.input :summe_treuekarte %>
+      </div>
+      <div class="col-3">
+        <%= f.input :summe_rabatte %>
+      </div>
+      <div class="col-3">
+        <%= f.input :summe_rechnung %>
+      </div>
+    </div>
+    <div class="row py-2 my-3 border bg-white align-items-end">
+      <div class="col-12 py-2">
+        <h4>Gutschein und Einkauf</h4>
+      </div>
+      <div class="col-4">
+        <%= f.input :summe_gutschein %>
+      </div>
+      <div class="col-4">
+        <%= f.input :gutschein_nummer %>
+      </div>
+      <div class="col-4">
+        <%= f.input :summe_einkauf %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, class: 'btn btn-primary' %>
+  </div>
+<% end %>

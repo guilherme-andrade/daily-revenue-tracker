@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DailyRevenueTracker</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body class="bg-light">
+    <% if flash.notice %>
+      <div class="col-xs-12 bg-success text-white d-flex align-items-center justify-content-center p-2">
+        <p class="mb-0"><%= flash.notice %></p>
+      </div>
+    <% elsif flash.alert %>
+      <div class="col-xs-12 bg-danger text-white d-flex align-items-center justify-content-center p-2">
+        <p class="mb-0"><%= flash.alert %></p>
+      </div>
+    <% end %>
+    <div class="container d-flex flex-column justify-content-center align-items-center" style="height: 95vh;">
+      <%= yield %>
+    </div>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </body>
+</html>
