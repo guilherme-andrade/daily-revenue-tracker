@@ -1,28 +1,32 @@
-<div class="row align-items-center h-100">
-  <div class="col-6 offset-3 text-center rounded bg-white">
+<div class="row align-items-center justify-content-center h-100">
+  <div class="col-10 text-center rounded bg-white p-5">
       <div class="col-xs-12">
-        <h1>Report Submitted!</h1>
+        <h1>Report - Kontrolle</h1>
       </div>
       <div class="col-xs-12">
         <p>
-          Thank you <%= current_user.full_name %>. Please check that you have the missing cash amount.
+          <strong>Danke <%= current_user.full_name %>.</strong> Bitte kontrolliere, dass du die richtige Bargeldsumme abgibst.
         </p>
       </div>
-      <div class="col-xs-12">
+      <div class="col-xs-12 pb-3">
         <h1>
-          Cash Missing ->
+          Bargeld abgeben <br>
           <span class="text-primary">
             <%= @daily_report.bar %>
           </span>
         </h1>
         <h2>
-          Summe KreditKarte ->
+          Summe KreditKarte <br>
           <span class="text-muted">
             <%= @daily_report.kreditkarte_total %>
           </span>
         </h2>
       </div>
-    <%= link_to 'Confirm', confirm_daily_report_path(@daily_report), class: 'btn btn-primary', method: :patch %>
-    <%= link_to 'Redo Report', daily_report_path(@daily_report), method: :delete, class: 'btn btn-danger'  %>
+      <div class="row justify-content-center pb-3">
+        <%= link_to 'Bestätigung', confirm_daily_report_path(@daily_report), class: 'btn btn-lg btn-primary', method: :patch %>
+      </div>
+      <div class="row justify-content-center pb-3">
+        <%= link_to 'Zurück zum Report', daily_report_path(@daily_report), method: :delete, class: 'btn btn-danger'  %>
+      </div>
   </div>
 </div>

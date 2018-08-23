@@ -4,6 +4,7 @@
   <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
 
   <div class="form-inputs">
+      <%= f.input :business, as: :hidden %>
     <div class="row py-2 my-3 border bg-white">
       <div class="col-6">
         <%= f.input :date %>
@@ -11,24 +12,24 @@
     </div>
     <div class="row py-2 my-3 border bg-white">
       <div class="col-12 py-2">
-        <h4>Lunch</h4>
+        <h4>Mittag</h4>
       </div>
       <div class="col-6">
-        <%= f.input :lunch_umsatz %>
+        <%= f.input :lunch_umsatz, label: 'Mittag Umsatz' %>
       </div>
       <div class="col-6">
-        <%= f.input :lunch_anzahl_personen %>
+        <%= f.input :lunch_anzahl_personen, label: 'Mittag Anzahl Personen'  %>
       </div>
     </div>
     <div class="row py-2 my-3 border bg-white">
       <div class="col-12 py-2">
-        <h4>Dinner</h4>
+        <h4>Abend</h4>
       </div>
       <div class="col-6">
-        <%= f.input :dinner_umsatz %>
+        <%= f.input :dinner_umsatz, label: 'Abend Umsatz'   %>
       </div>
       <div class="col-6">
-        <%= f.input :dinner_anzahl_personen %>
+        <%= f.input :dinner_anzahl_personen, label: 'Abend Anzahl Personen'   %>
       </div>
     </div>
     <div class="row py-2 my-3 border bg-white">
@@ -53,16 +54,16 @@
         <h4>Andere</h4>
       </div>
       <div class="col-3">
-        <%= f.input :summe_lunchchecks %>
+        <%= f.input :summe_lunchchecks, label: 'Summe LunchChecks' %>
       </div>
       <div class="col-3">
-        <%= f.input :summe_treuekarte %>
+        <%= f.input :summe_treuekarte, label: 'Summe Treuekarte'  %>
       </div>
       <div class="col-3">
-        <%= f.input :summe_rabatte %>
+        <%= f.input :summe_rabatte, label: 'Summe Rabatte'  %>
       </div>
       <div class="col-3">
-        <%= f.input :summe_rechnung %>
+        <%= f.input :summe_rechnung, label: 'Summe Rechnung'  %>
       </div>
     </div>
     <div class="row py-2 my-3 border bg-white align-items-end">
@@ -70,13 +71,13 @@
         <h4>Gutschein und Einkauf</h4>
       </div>
       <div class="col-4">
-        <%= f.input :summe_gutschein %>
+        <%= f.input :summe_gutschein, label: 'Summe Gutschein'  %>
       </div>
       <div class="col-4">
-        <%= f.input :gutschein_nummer %>
+        <%= f.input :gutschein_nummer, label: 'Gutschein Nummer'  %>
       </div>
       <div class="col-4">
-        <%= f.input :summe_einkauf %>
+        <%= f.input :summe_einkauf, label: 'Summe Einkauf'  %>
       </div>
     </div>
   </div>

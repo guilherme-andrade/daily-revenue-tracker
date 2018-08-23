@@ -36,6 +36,6 @@ class DailyReport < ApplicationRecord
   end
 
   def to_column
-    [[self.user.username, self.date, self.lunch_anzahl_personen, self.lunch_umsatz, self.dinner_anzahl_personen, self.dinner_umsatz, self.bar, self.mastercard, self.visa, self.maestro, self.andere, self.kreditkarte_total, self.summe_treuekarte, self.summe_rechnung, self.summe_rabatte, self.summe_lunchchecks, self.gutschein_nummer, self.summe_gutschein, self.total_umsatz]]
+    [[self.user.username, self.date, self.lunch_anzahl_personen, self.lunch_umsatz, self.dinner_anzahl_personen, self.dinner_umsatz, self.bar, self.mastercard, self.visa, self.maestro, self.andere, self.kreditkarte_total, self.summe_treuekarte, self.summe_rechnung, self.summe_rabatte, self.summe_lunchchecks, self.summe_einkauf, self.gutschein_nummer, self.summe_gutschein, self.total_umsatz]]
   end
 end

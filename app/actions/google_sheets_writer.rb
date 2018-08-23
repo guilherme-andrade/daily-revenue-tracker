@@ -21,11 +21,16 @@ class GoogleSheetsWriter
   end
 
   def write(report)
-    spreadsheet_id = '1d2-SGlGjPAR_f9E60yy6yuijJv0BaegFmg8ZjJrjx00'
-    range = 'Sheet1!A:ZZ'
+    if report.business == 'restaurant'
+      spreadsheet_id = '1d2-SGlGjPAR_f9E60yy6yuijJv0BaegFmg8ZjJrjx00'
+    elsif report.business == 'coffee'
+      spreadsheet_id = '1koMvadlWcWrscIP0kNWNnbyv3EGGh1bH2ogUrMLb8ro'
+    end
+    sheet_name = report.date.strftime("%B")
+    range = "#{sheet_name}!A:ZZ"
     column_number = @service.get_spreadsheet_values(spreadsheet_id, range).values.first.length + 1
     column = report_column(report)
-    range = "Sheet1!#{s26(column_number)}:#{s26(column_number)}"
+    range = "#{sheet_name}!#{s26(column_number)}:#{s26(column_number)}"
     response = @service.append_spreadsheet_value(spreadsheet_id, range, column, value_input_option: "RAW")
   end
 
@@ -47,18 +52,5 @@ class GoogleSheetsWriter
       end
       credentials
     end
-
-    def s26(number)
-      alpha26 = ("a".."z").to_a
-      return "" if number < 1
-      s, q = "", number
-      loop do
-        q, r = (q - 1).divmod(26)
-        s.prepend(alpha26[r])
-        break if q.zero?
-      end
-      s
-    end
-
 end
 

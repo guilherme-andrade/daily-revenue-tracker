@@ -3,8 +3,14 @@ class DailyReportsController < ApplicationController
 
   def show; end
 
-  def new
-    @daily_report = DailyReport.new
+  def coffee
+    @daily_report = DailyReport.new(business: 'coffee')
+    render :new
+  end
+
+  def restaurant
+    @daily_report = DailyReport.new(business: 'restaurant')
+    render :new
   end
 
   def create
@@ -39,6 +45,6 @@ class DailyReportsController < ApplicationController
     end
 
     def daily_report_params
-      params.require(:daily_report).permit(:name_und_vorname, :date, :dinner_umsatz, :dinner_anzahl_personen, :lunch_umsatz, :lunch_anzahl_personen, :summe_lunchchecks, :mastercard, :visa, :maestro, :andere, :summe_treuekarte, :summe_rabatte, :summe_rechnung, :summe_gutschein, :gutschein_nummer, :summe_einkauf)
+      params.require(:daily_report).permit(:name_und_vorname, :date, :dinner_umsatz, :dinner_anzahl_personen, :lunch_umsatz, :lunch_anzahl_personen, :summe_lunchchecks, :mastercard, :visa, :maestro, :andere, :summe_treuekarte, :summe_rabatte, :summe_rechnung, :summe_gutschein, :gutschein_nummer, :summe_einkauf, :business)
     end
 end
