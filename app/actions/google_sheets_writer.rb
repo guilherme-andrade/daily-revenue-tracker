@@ -52,5 +52,17 @@ class GoogleSheetsWriter
       end
       credentials
     end
+
+    def s26(number)
+      alpha26 = ("a".."z").to_a
+      return "" if number < 1
+      s, q = "", number
+      loop do
+        q, r = (q - 1).divmod(26)
+        s.prepend(alpha26[r])
+        break if q.zero?
+      end
+      s
+    end
 end
 
