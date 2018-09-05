@@ -16,7 +16,11 @@ class GoogleSheetsWriter
   end
 
   def report_column(report)
-    new_column = report.to_column
+    if report.business == 'store'
+      new_column = report.to_store_column
+    else
+      new_column = report.to_column
+    end
     Google::Apis::SheetsV4::ValueRange.new(values: new_column, major_dimension: 'COLUMNS')
   end
 
@@ -25,6 +29,8 @@ class GoogleSheetsWriter
       spreadsheet_id = '1d2-SGlGjPAR_f9E60yy6yuijJv0BaegFmg8ZjJrjx00'
     elsif report.business == 'coffee'
       spreadsheet_id = '1koMvadlWcWrscIP0kNWNnbyv3EGGh1bH2ogUrMLb8ro'
+    elsif report.business == 'store'
+      spreadsheet_id = '1L4faHIUm8Xm0pZPk-XMKCt-TiAGAKy4lc-3e1aQhqtU'
     end
     sheet_name = report.date.strftime("%B")
     range = "#{sheet_name}!A:ZZ"

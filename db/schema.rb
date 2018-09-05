@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180823120219) do
+ActiveRecord::Schema.define(version: 20180905142227) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 20180823120219) do
     t.float "lunch_umsatz"
     t.integer "lunch_anzahl_personen"
     t.string "business"
+    t.float "total_umsatz"
     t.index ["user_id"], name: "index_daily_reports_on_user_id"
   end
 
