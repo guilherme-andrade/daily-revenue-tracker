@@ -27,14 +27,14 @@ class GoogleSheetsWriter
 
   def assign_spreadsheet
     @spreadsheet = Spreadsheet.find_or_create_by(
-      year: Time.now.year,
+      year: @report.created_at.year,
       business: @report.business
     )
 
     unless @spreadsheet.remote_id
       request_body = Google::Apis::SheetsV4::Spreadsheet.new(
         properties: {
-          title: "#{@report.business.capitalize} Daily Revenues - #{Time.now.year}"
+          title: "#{@report.business.capitalize} Daily Revenues - #{@report.created_at.year}"
         }
       )
       @remote_spreadsheet = @service.create_spreadsheet(request_body)
@@ -118,7 +118,7 @@ class GoogleSheetsWriter
   end
 
   def month_dates
-    (Date.new(Time.now.year, 1)..Date.new(Time.now.year, 12))
+    (Date.new(@report.created_at.year, 1)..Date.new(@report.created_at.year, 12))
       .select { |d| d.day == 1 }
       .map { |d| d.strftime('%B %y') }
   end
@@ -158,7 +158,7 @@ class GoogleSheetsWriter
         Gutschein_No.
         Summe_Gutschein
         Umsatz
-      ].map { |header| header.humanize }
+      ].map(&:humanize)
     ]
     Google::Apis::SheetsV4::ValueRange
       .new(values: headers, major_dimension: 'COLUMNS')
