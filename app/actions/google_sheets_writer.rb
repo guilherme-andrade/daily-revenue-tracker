@@ -2,6 +2,7 @@ require 'google/apis/sheets_v4'
 require 'googleauth'
 require 'googleauth/stores/file_token_store'
 require 'fileutils'
+require 'byebug'
 
 class GoogleSheetsWriter
   def initialize
@@ -15,60 +16,153 @@ class GoogleSheetsWriter
     @service.authorization = authorize
   end
 
-  def report_column(report)
-    if report.business == 'store'
-      new_column = report.to_store_column
+  def report_column
+    if @report.business == 'store'
+      new_column = @report.to_store_column
     else
-      new_column = report.to_column
+      new_column = @report.to_column
     end
-    Google::Apis::SheetsV4::ValueRange.new(values: new_column, major_dimension: 'COLUMNS')
+    Google::Apis::SheetsV4::ValueRange
+      .new(values: new_column, major_dimension: 'COLUMNS')
+  end
+
+  def assign_spreadsheet
+    @spreadsheet = Spreadsheet.find_or_create_by(
+      year: Time.now.year,
+      business: @report.business
+    )
+
+    unless @spreadsheet.remote_id
+      request_body = Google::Apis::SheetsV4::Spreadsheet.new(
+        properties: {
+          title: "#{@report.business.capitalize} Daily Revenues - #{Time.now.year}"
+        }
+      )
+      @remote_spreadsheet = @service.create_spreadsheet(request_body)
+
+      batch_request = Google::Apis::SheetsV4::BatchUpdateSpreadsheetRequest.new
+      batch_request.requests = monthly_sheets_hashes
+
+      @service.batch_update_spreadsheet(@remote_spreadsheet.spreadsheet_id, batch_request)
+
+      @spreadsheet.update(remote_id: @remote_spreadsheet.spreadsheet_id)
+    end
+
+    @report.spreadsheet = @spreadsheet
+    @report.save!
+    @spreadsheet_id = @report.spreadsheet.remote_id
   end
 
   def write(report)
-    if report.business == 'restaurant'
-      spreadsheet_id = '1d2-SGlGjPAR_f9E60yy6yuijJv0BaegFmg8ZjJrjx00'
-    elsif report.business == 'coffee'
-      spreadsheet_id = '1koMvadlWcWrscIP0kNWNnbyv3EGGh1bH2ogUrMLb8ro'
-    elsif report.business == 'store'
-      spreadsheet_id = '1L4faHIUm8Xm0pZPk-XMKCt-TiAGAKy4lc-3e1aQhqtU'
-    end
-    sheet_name = report.date.strftime("%B")
+    @report = report
+    assign_spreadsheet
+    sheet_name = @report.date.strftime("%B %y")
     range = "#{sheet_name}!A:ZZ"
-    column_number = @service.get_spreadsheet_values(spreadsheet_id, range).values.first.length + 1
-    column = report_column(report)
+
+    spreadsheet_values = @service.get_spreadsheet_values(@spreadsheet_id, range).values
+
+    unless spreadsheet_values
+      @service.append_spreadsheet_value(
+        @spreadsheet_id,
+        "#{sheet_name}!#{s26(1)}:#{s26(1)}",
+        headers_column,
+        value_input_option: 'RAW'
+      )
+      spreadsheet_values = @service.get_spreadsheet_values(@spreadsheet_id, range).values
+    end
+
+    column_number = spreadsheet_values.first.length + 1
+
+    column = report_column
+
     range = "#{sheet_name}!#{s26(column_number)}:#{s26(column_number)}"
-    response = @service.append_spreadsheet_value(spreadsheet_id, range, column, value_input_option: "RAW")
+
+    @service.append_spreadsheet_value(
+      @spreadsheet_id,
+      range,
+      column,
+      value_input_option: 'RAW'
+    )
   end
 
   private
-    def authorize
-      client_id = Google::Auth::ClientId.from_file(@credentials_path)
-      token_store = Google::Auth::Stores::FileTokenStore.new(file: @token_path)
-      authorizer = Google::Auth::UserAuthorizer.new(client_id, @scope, token_store)
-      user_id = 'default'
-      credentials = authorizer.get_credentials(user_id)
-      if credentials.nil?
-        url = authorizer.get_authorization_url(base_url: @oob_uri)
-        puts 'Open the following URL in the browser and enter the ' \
-             "resulting code after authorization:\n" + url
-        code = gets
-        credentials = authorizer.get_and_store_credentials_from_code(
-          user_id: user_id, code: code, base_url: @oob_uri
-        )
-      end
-      credentials
-    end
 
-    def s26(number)
-      alpha26 = ("a".."z").to_a
-      return "" if number < 1
-      s, q = "", number
-      loop do
-        q, r = (q - 1).divmod(26)
-        s.prepend(alpha26[r])
-        break if q.zero?
-      end
-      s
+  def authorize
+    client_id = Google::Auth::ClientId.from_file(@credentials_path)
+    token_store = Google::Auth::Stores::FileTokenStore.new(file: @token_path)
+    authorizer = Google::Auth::UserAuthorizer.new(client_id, @scope, token_store)
+    user_id = 'default'
+    credentials = authorizer.get_credentials(user_id)
+    if credentials.nil?
+      url = authorizer.get_authorization_url(base_url: @oob_uri)
+      puts 'Open the following URL in the browser and enter the ' \
+           "resulting code after authorization:\n" + url
+      code = gets
+      credentials = authorizer.get_and_store_credentials_from_code(
+        user_id: user_id, code: code, base_url: @oob_uri
+      )
     end
+    credentials
+  end
+
+  def s26(number)
+    alpha26 = ('a'..'z').to_a
+    return '' if number < 1
+    s = ''
+    q = number
+    loop do
+      q, r = (q - 1).divmod(26)
+      s.prepend(alpha26[r])
+      break if q.zero?
+    end
+    s
+  end
+
+  def month_dates
+    (Date.new(Time.now.year, 1)..Date.new(Time.now.year, 12))
+      .select { |d| d.day == 1 }
+      .map { |d| d.strftime('%B %y') }
+  end
+
+  def monthly_sheets_hashes
+    month_dates.map do |month_year|
+      {
+        add_sheet: {
+          properties: {
+            title: month_year
+          }
+        }
+      }
+    end
+  end
+
+  def headers_column
+    headers = [
+      %w[
+        Name
+        Date
+        Lunch_Anzahl_Personen
+        Lunch_Umsatz
+        Dinner_Personen
+        Dinner_Umsatz
+        Bar
+        MasterCard
+        Visa
+        Maestro
+        Andere
+        Kreditkarte_Total
+        Treuekarte
+        Rechnung
+        Rabatte
+        LunchChecks
+        Einkauf
+        Gutschein_No.
+        Summe_Gutschein
+        Umsatz
+      ].map { |header| header.humanize }
+    ]
+    Google::Apis::SheetsV4::ValueRange
+      .new(values: headers, major_dimension: 'COLUMNS')
+  end
 end
 

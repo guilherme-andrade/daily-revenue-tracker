@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180905142227) do
+ActiveRecord::Schema.define(version: 20190402124513) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,7 +41,17 @@ ActiveRecord::Schema.define(version: 20180905142227) do
     t.integer "lunch_anzahl_personen"
     t.string "business"
     t.float "total_umsatz"
+    t.bigint "spreadsheet_id"
+    t.index ["spreadsheet_id"], name: "index_daily_reports_on_spreadsheet_id"
     t.index ["user_id"], name: "index_daily_reports_on_user_id"
+  end
+
+  create_table "spreadsheets", force: :cascade do |t|
+    t.string "remote_id"
+    t.integer "year"
+    t.string "business"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -58,5 +68,6 @@ ActiveRecord::Schema.define(version: 20180905142227) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "daily_reports", "spreadsheets"
   add_foreign_key "daily_reports", "users"
 end

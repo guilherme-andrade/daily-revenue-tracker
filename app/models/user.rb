@@ -7,8 +7,7 @@ class User < ApplicationRecord
   devise :database_authenticatable,
          :recoverable, :rememberable, :validatable
 
-
   def set_email
-    self.email = self.username + "@njord.li"
+    self.email = username + '@njord.li'
   end
 end

@@ -1,5 +1,6 @@
 class DailyReport < ApplicationRecord
   belongs_to :user
+  belongs_to :spreadsheet, optional: true
   before_create :calculate_kreditkarte_total, unless: :store?
   before_create :calculate_cash_revenues, unless: :store?
 

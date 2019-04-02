@@ -22,7 +22,7 @@ class DailyReportsController < ApplicationController
     @daily_report = DailyReport.new(daily_report_params)
     @daily_report.user = current_user
     @daily_report.status = false
-    if @daily_report.save
+    if @daily_report.save!
       redirect_to @daily_report, notice: 'Daily report was successfully created.'
     else
       render :new
